@@ -73,8 +73,8 @@ export function Story() {
           <div data-clip className="relative aspect-[4/5] overflow-hidden rounded-3xl sm:aspect-[16/9] lg:w-[78%]">
             <img
               data-parallax="5"
-              src="/images/party1.webp"
-              srcSet="/images/party1-sm.webp 900w, /images/party1.webp 1376w"
+              src="/images/story-crew.webp"
+              srcSet="/images/story-crew-sm.webp 900w, /images/story-crew.webp 1376w"
               sizes="(min-width: 1024px) 78vw, 100vw"
               alt="Friends cheering under lasers and confetti, each raising a small ADRIN bottle — Cactus, Mandarin and Sparkling Lime"
               loading="lazy"
@@ -91,8 +91,8 @@ export function Story() {
             <div data-clip className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-white/10 shadow-[0_40px_120px_-30px_rgba(0,0,0,0.9)]">
               <img
                 data-parallax="8"
-                src="/images/party2.webp"
-                alt="A DJ seen from behind raising a small ADRIN Mandarin bottle to a festival crowd, a Pomegranate bottle on the decks"
+                src="/images/story-dj.webp"
+                alt="A DJ seen from behind raising a small ADRIN Mandarin bottle to a festival crowd"
                 loading="lazy"
                 decoding="async"
                 className="absolute inset-0 h-[124%] w-full -translate-y-[10%] object-cover object-[55%_50%]"
