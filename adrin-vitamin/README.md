@@ -12,7 +12,7 @@ npm run build    # type-check + production build to dist/
 
 ## The experience
 
-The whole site is set in a night-time festival: stage beams sweep down from the rig, a backlit crowd fills the bottom of the frame, and confetti and soft bokeh lights drift in the air. **Every light in the experience follows the selected flavour.** That covers the stage beams, the crowd rim light, confetti, particles, the rim light on the bottle, bloom, buttons, highlights and the neon wordmark.
+The whole site is set in a night-time arena: a full-screen venue photograph sits behind the bottle, with confetti and soft bokeh lights drifting in front of it. **Every light in the experience follows the selected flavour.** The photo is colour-graded live (warm stage wash → the flavour colour, cool spotlights → its second colour), and the same colours drive the confetti, particles, the rim light on the bottle, bloom, buttons, highlights and the neon wordmark.
 
 | # | Section | What happens in 3D |
 |---|---------|--------------------|
@@ -43,7 +43,8 @@ Flavour data lives in `src/lib/flavors.ts`. Changing `accent` / `accent2` there 
     - a clear glass neck with a rolled lip
     - a crown cap with 21 crimped flutes
   - **Label** (`src/three/textures.ts`): a full-colour canvas with the two-tone liquid gradient, carbonation, the ADRIN logo, the flavour name and a back panel (nutrition facts and barcode). The lathe UVs follow arc length, so the artwork is placed by bottle height and corrected for curvature.
-  - **Party layer** (`src/three/Party.tsx`): additive stage-beam cones, bokeh points, GPU-animated instanced confetti, and a crowd silhouette with an accent-coloured rim light. Beam, crowd and confetti strength are set per section in `poses.ts`.
+  - **Venue backdrop** (`src/three/PhotoBackdrop.tsx`): `public/images/venue.webp` (`venue-sm.webp` on small or low-power screens) drawn as a cover-fit full-screen quad. A shader re-tints it to the flavour, dims it per section, keeps a vignette for legibility and drifts slowly with the pointer and scroll.
+  - **Party layer** (`src/three/Party.tsx`): bokeh points and GPU-animated instanced confetti. Backdrop, bokeh and confetti strength are set per section in `poses.ts`.
   - **Studio lighting**: procedural softboxes pre-filtered with PMREM (`src/three/studioEnv.ts`).
 - **Scroll choreography:** ScrollTrigger progress is stored in `src/lib/sceneState.ts`. The render loop blends the per-section poses with damping.
 - **Product renders:** flavour cards and cart thumbnails are snapshots of the same procedural bottle, rendered once offscreen (`src/three/productShots.ts`).
@@ -58,9 +59,9 @@ Flavour data lives in `src/lib/flavors.ts`. Changing `accent` / `accent2` there 
 ## Performance and accessibility
 
 - three.js and R3F load in a separate chunk, after the fonts and logo.
-- Pixel ratio adapts through `PerformanceMonitor`. Low-power devices get fewer beams, particles and confetti.
+- Pixel ratio adapts through `PerformanceMonitor`. Low-power devices get fewer particles and confetti and a smaller backdrop image.
 - `prefers-reduced-motion` turns off smooth scroll, idle spin, parallax and split-text animations.
 - **No WebGL** (or a WebGL crash): a matching vector bottle replaces the 3D scene.
 - Dialogs trap focus and close with Esc. Arrow keys switch flavours in the product showcase.
 
-Party photography and the crowd silhouette in `public/images` are AI-generated and were optimised to WebP.
+Photography in `public/images` is optimised to WebP.

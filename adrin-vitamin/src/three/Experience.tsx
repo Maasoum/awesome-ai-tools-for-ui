@@ -6,7 +6,8 @@ import { PerformanceMonitor } from '@react-three/drei'
 import * as THREE from 'three'
 import { BottleRig } from './BottleRig'
 import { Party } from './Party'
-import { EnergyParticles, AirDroplets, Smoke, Backdrop, BigType } from './Atmosphere'
+import { PhotoBackdrop } from './PhotoBackdrop'
+import { EnergyParticles, AirDroplets, Smoke, BigType } from './Atmosphere'
 import { createStudioEnv } from './studioEnv'
 import { useUI } from '../store/ui'
 import { sceneState } from '../lib/sceneState'
@@ -98,7 +99,7 @@ export default function Experience() {
         onIncline={() => setDpr((d) => Math.min(window.devicePixelRatio, d + 0.25, 1.75))}
       />
       <StudioEnvironment />
-      <Backdrop />
+      <PhotoBackdrop />
       <Party />
       <BigType />
       <Smoke />

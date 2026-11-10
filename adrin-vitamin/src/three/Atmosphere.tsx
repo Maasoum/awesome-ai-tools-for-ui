@@ -278,69 +278,6 @@ export function Smoke() {
   )
 }
 
-/* ------------------------------ Backdrop ------------------------------ */
-
-export function Backdrop() {
-  const mat = useRef<THREE.ShaderMaterial>(null!)
-  const { camera } = useThree()
-  const uniforms = useMemo(
-    () => ({
-      uColor: { value: rig.accent.clone() },
-      uColor2: { value: rig.accent2.clone() },
-      uStage: { value: 1 },
-      uCenter: { value: new THREE.Vector2(0.5, 0.5) },
-      uIntensity: { value: 1 },
-      uTime: { value: 0 },
-    }),
-    [],
-  )
-  const v = new THREE.Vector3()
-  useFrame((state) => {
-    const u = mat.current.uniforms
-    u.uColor.value.copy(rig.accent)
-    u.uColor2.value.copy(rig.accent2)
-    u.uStage.value = THREE.MathUtils.damp(u.uStage.value, 0.35 + rig.crowd * 0.65, 3, 1 / 60)
-    v.copy(rig.productWorld).project(camera)
-    u.uCenter.value.set(v.x * 0.5 + 0.5, v.y * 0.5 + 0.5)
-    u.uIntensity.value = rig.glow
-    u.uTime.value = state.clock.elapsedTime
-  })
-  return (
-    <mesh renderOrder={-10} frustumCulled={false}>
-      <planeGeometry args={[2, 2]} />
-      <shaderMaterial
-        ref={mat}
-        uniforms={uniforms}
-        depthWrite={false}
-        depthTest={false}
-        vertexShader={/* glsl */ `
-          varying vec2 vUv;
-          void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.9999, 1.0); }`}
-        fragmentShader={/* glsl */ `
-          uniform vec3 uColor; uniform vec3 uColor2; uniform float uStage; uniform vec2 uCenter; uniform float uIntensity; uniform float uTime;
-          varying vec2 vUv;
-          float hash(vec2 p){ return fract(sin(dot(p, vec2(12.9898,78.233))) * 43758.5453); }
-          void main(){
-            // club darkness: near-black with a violet cast
-            vec3 base = vec3(0.0085, 0.0052, 0.0115);
-            vec2 d = vUv - uCenter; d.x *= 1.6;
-            float g = exp(-dot(d,d) * 3.2);
-            float halo = exp(-dot(d,d) * 14.0);
-            vec3 col = base + uColor * (g * 0.022 + halo * 0.04) * uIntensity;
-            // stage glow rising behind the crowd
-            float band = exp(-pow((vUv.y - 0.34) / 0.22, 2.0));
-            col += uColor * band * 0.055 * uStage * (0.6 + 0.4 * (1.0 - abs(vUv.x - 0.5) * 1.4));
-            // coloured haze in the upper corners (secondary light rig)
-            col += uColor2 * 0.018 * uStage * (exp(-dot(vUv - vec2(0.05, 1.0), vUv - vec2(0.05, 1.0)) * 6.0) + exp(-dot(vUv - vec2(0.95, 1.0), vUv - vec2(0.95, 1.0)) * 6.0));
-            col *= 1.0 - 0.35 * smoothstep(0.2, 0.9, length(vUv - 0.5));
-            col += (hash(vUv * 900.0 + uTime) - 0.5) * 0.004;
-            gl_FragColor = vec4(col, 1.0);
-          }`}
-      />
-    </mesh>
-  )
-}
-
 /* ---------------------- Final-shot giant wordmark ---------------------- */
 
 export function BigType() {

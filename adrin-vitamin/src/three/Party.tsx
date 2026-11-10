@@ -4,108 +4,14 @@ import * as THREE from 'three'
 import { rig } from './poses'
 import { sceneState } from '../lib/sceneState'
 
-const crowdUrl = `${import.meta.env.BASE_URL}images/crowd-mask.webp`
 
 /*
- * The party layer: stage beams, out-of-focus bokeh, confetti and a backlit crowd.
+ * The party layer floating in front of the venue photo: out-of-focus bokeh and confetti.
  * Every colour reads from rig.accent / rig.accent2, so the whole venue relights
  * when a different flavour is picked.
  */
 
 const damp = THREE.MathUtils.damp
-
-/* ------------------------------ Stage beams ------------------------------ */
-
-export function StageBeams() {
-  const COUNT = sceneState.lowPower ? 4 : 6
-  const L = 15
-  const group = useRef<THREE.Group>(null!)
-  const geo = useMemo(() => {
-    const g = new THREE.CylinderGeometry(0.05, 1.5, L, 40, 1, true)
-    g.translate(0, -L / 2, 0) // apex at origin
-    return g
-  }, [])
-  const beams = useMemo(
-    () =>
-      Array.from({ length: COUNT }, (_, i) => {
-        const t = i / (COUNT - 1)
-        return {
-          x: THREE.MathUtils.lerp(-7.5, 7.5, t),
-          z: -6 - (i % 2) * 1.2,
-          base: (t - 0.5) * -0.9,
-          amp: 0.22 + (i % 3) * 0.08,
-          speed: 0.22 + ((i * 37) % 10) * 0.018,
-          phase: i * 1.7,
-          second: i % 2 === 1,
-        }
-      }),
-    [COUNT],
-  )
-  const mats = useMemo(
-    () =>
-      beams.map(
-        () =>
-          new THREE.ShaderMaterial({
-            uniforms: { uColor: { value: new THREE.Color() }, uIntensity: { value: 0 } },
-            transparent: true,
-            depthWrite: false,
-            side: THREE.DoubleSide,
-            blending: THREE.AdditiveBlending,
-            vertexShader: /* glsl */ `
-              varying vec2 vUv; varying vec3 vN; varying vec3 vV;
-              void main(){
-                vUv = uv;
-                vec4 mv = modelViewMatrix * vec4(position, 1.0);
-                vN = normalize(normalMatrix * normal);
-                vV = normalize(-mv.xyz);
-                gl_Position = projectionMatrix * mv;
-              }`,
-            fragmentShader: /* glsl */ `
-              uniform vec3 uColor; uniform float uIntensity;
-              varying vec2 vUv; varying vec3 vN; varying vec3 vV;
-              void main(){
-                float facing = pow(abs(dot(normalize(vN), normalize(vV))), 1.4);
-                float along = pow(vUv.y, 1.1) * smoothstep(0.0, 0.3, vUv.y);
-                float a = facing * along * uIntensity;
-                gl_FragColor = vec4(uColor * a, a);
-              }`,
-          }),
-      ),
-    [beams],
-  )
-  useEffect(
-    () => () => {
-      geo.dispose()
-      mats.forEach((m) => m.dispose())
-    },
-    [geo, mats],
-  )
-
-  const tmp = useMemo(() => new THREE.Color(), [])
-  useFrame((state) => {
-    const t = sceneState.reduced ? 0 : state.clock.elapsedTime
-    const halfW = Math.max(rig.halfW, 3)
-    group.current.children.forEach((m, i) => {
-      const b = beams[i]
-      m.position.set(b.x * (halfW / 6.5), 7.6, b.z)
-      m.rotation.z = b.base + Math.sin(t * b.speed + b.phase) * b.amp
-      m.rotation.x = 0.18 + Math.sin(t * b.speed * 0.7 + b.phase) * 0.08
-      const mat = mats[i]
-      tmp.copy(b.second ? rig.accent2 : rig.accent)
-      mat.uniforms.uColor.value.copy(tmp)
-      // constant brightness — the beams only move, they never flicker
-      mat.uniforms.uIntensity.value = damp(mat.uniforms.uIntensity.value, 0.38 * rig.beams, 3, 1 / 60)
-    })
-  })
-
-  return (
-    <group ref={group}>
-      {beams.map((_, i) => (
-        <mesh key={i} geometry={geo} material={mats[i]} renderOrder={-6} frustumCulled={false} />
-      ))}
-    </group>
-  )
-}
 
 /* -------------------------------- Bokeh -------------------------------- */
 
@@ -276,115 +182,10 @@ export function Confetti() {
   )
 }
 
-/* -------------------------------- Crowd -------------------------------- */
-
-/**
- * A handful of fans (5 silhouettes) standing behind the bottle, backlit by the stage.
- * The rim light slowly travels along their outlines — movement only, no flicker.
- */
-export function Crowd() {
-  const mesh = useRef<THREE.Mesh>(null!)
-  const tex = useMemo(() => {
-    const t = new THREE.TextureLoader().load(crowdUrl)
-    t.wrapS = THREE.ClampToEdgeWrapping
-    t.wrapT = THREE.ClampToEdgeWrapping
-    t.colorSpace = THREE.NoColorSpace
-    t.anisotropy = 4
-    return t
-  }, [])
-  const ASPECT = 2048 / 677
-  const mat = useMemo(
-    () =>
-      new THREE.ShaderMaterial({
-        uniforms: {
-          uTex: { value: tex },
-          uA: { value: rig.accent.clone() },
-          uB: { value: rig.accent2.clone() },
-          uOpacity: { value: 1 },
-          uTime: { value: 0 },
-          uTexel: { value: new THREE.Vector2(1 / 2048, 1 / 677) },
-        },
-        transparent: true,
-        depthWrite: false,
-        vertexShader: /* glsl */ `
-          varying vec2 vUv;
-          void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
-        fragmentShader: /* glsl */ `
-          uniform sampler2D uTex; uniform vec3 uA; uniform vec3 uB; uniform float uOpacity; uniform float uTime; uniform vec2 uTexel;
-          varying vec2 vUv;
-          float S(vec2 p){ return texture2D(uTex, clamp(p, vec2(0.0005), vec2(0.9995))).r; }
-          void main(){
-            vec2 uv = vUv;
-            // raised arms sway very slightly, more toward the top of the frame
-            uv.x += sin(uTime * 0.8 + uv.x * 14.0) * 0.0025 * uv.y * uv.y;
-            float m = S(uv);
-            // backlight: a thin rim where the stage light grazes the outline, brightest on top edges
-            vec2 o = uTexel * 3.0;
-            float ring = (S(uv + vec2(o.x, 0.0)) + S(uv - vec2(o.x, 0.0)) + S(uv + vec2(0.0, o.y)) + S(uv - vec2(0.0, o.y))
-                        + S(uv + o * 0.7) + S(uv - o * 0.7) + S(uv + vec2(o.x, -o.y) * 0.7) + S(uv + vec2(-o.x, o.y) * 0.7)) / 8.0;
-            float rim = clamp((m - ring) * 1.8, 0.0, 1.0);
-            float top = clamp((m - S(uv + vec2(0.0, o.y * 2.0))) * 2.0, 0.0, 1.0);
-            float light = rim * 0.4 + top * 0.6;
-            // the light colour drifts slowly across the group (spatial, not temporal blinking)
-            float sweep = 0.5 + 0.5 * sin(vUv.x * 5.0 - uTime * 0.25);
-            vec3 lightCol = mix(uA, uB, sweep * 0.5);
-            vec3 col = vec3(0.004, 0.003, 0.006) + lightCol * 0.025;
-            col += lightCol * light * 0.85;
-            // soft stage glow leaking around the figures (outside the silhouette)
-            vec2 w = uTexel * 16.0;
-            float wide = (S(uv + vec2(w.x, 0.0)) + S(uv - vec2(w.x, 0.0)) + S(uv + vec2(0.0, w.y)) + S(uv - vec2(0.0, w.y))) * 0.25;
-            float halo = (1.0 - smoothstep(0.35, 0.65, m)) * wide;
-            // fade into the floor + soft side edges
-            float floorFade = smoothstep(0.0, 0.35, vUv.y);
-            col *= 0.35 + 0.65 * floorFade;
-            float side = smoothstep(0.0, 0.04, vUv.x) * smoothstep(1.0, 0.96, vUv.x);
-            float body = smoothstep(0.35, 0.65, m);
-            col = mix(lightCol * 0.9, col, body);
-            float alpha = max(body, halo * 0.22) * side * uOpacity;
-            gl_FragColor = vec4(col, alpha);
-          }`,
-      }),
-    [tex],
-  )
-  useEffect(
-    () => () => {
-      tex.dispose()
-      mat.dispose()
-    },
-    [tex, mat],
-  )
-  const Z = -3.4
-  useFrame((state) => {
-    const u = mat.uniforms
-    u.uA.value.copy(rig.accent)
-    u.uB.value.copy(rig.accent2)
-    u.uTime.value = sceneState.reduced ? 0 : state.clock.elapsedTime
-    u.uOpacity.value = damp(u.uOpacity.value, rig.crowd, 3, 1 / 60)
-    mesh.current.visible = u.uOpacity.value > 0.01
-    const cam = state.camera as THREE.PerspectiveCamera
-    const dist = cam.position.z - Z
-    const halfH = Math.tan(THREE.MathUtils.degToRad(cam.fov / 2)) * dist
-    const halfW = halfH * cam.aspect
-    // a handful of fans, about 40% of the frame height, grouped behind the bottle
-    let h = halfH * 2 * (cam.aspect < 0.8 ? 0.3 : 0.42)
-    h = Math.min(h, (halfW * 2 * 1.15) / ASPECT)
-    mesh.current.scale.set(h * ASPECT, h, 1)
-    // anchored to the bottom of the frame, slightly below so cut-off waists never show
-    mesh.current.position.set(cam.position.x * 0.5, cam.position.y - halfH + h * 0.5 - h * 0.06, Z)
-  })
-  return (
-    <mesh ref={mesh} material={mat} renderOrder={-4} frustumCulled={false}>
-      <planeGeometry args={[1, 1]} />
-    </mesh>
-  )
-}
-
 export function Party() {
   return (
     <>
       <Bokeh />
-      <StageBeams />
-      <Crowd />
       <Confetti />
     </>
   )
