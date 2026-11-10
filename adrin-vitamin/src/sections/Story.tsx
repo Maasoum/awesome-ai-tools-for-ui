@@ -70,16 +70,16 @@ export function Story() {
 
         {/* layered imagery */}
         <div className="relative mt-16 md:mt-24">
-          <div data-clip className="relative aspect-[4/5] overflow-hidden rounded-3xl sm:aspect-[16/10] lg:w-[78%]">
+          <div data-clip className="relative aspect-[4/5] overflow-hidden rounded-3xl sm:aspect-[16/9] lg:w-[78%]">
             <img
-              data-parallax="8"
+              data-parallax="5"
               src="/images/party1.webp"
-              srcSet="/images/party1-sm.webp 900w, /images/party1.webp 1800w"
+              srcSet="/images/party1-sm.webp 900w, /images/party1.webp 1376w"
               sizes="(min-width: 1024px) 78vw, 100vw"
-              alt="Friends cheering with bottles raised under lasers and falling confetti"
+              alt="Friends cheering under lasers and confetti, raising ADRIN Cactus, Mandarin, Sparkling Lime and Sparkling bottles"
               loading="lazy"
               decoding="async"
-              className="absolute inset-0 h-[120%] w-full -translate-y-[8%] object-cover object-[50%_45%]"
+              className="absolute inset-0 h-[114%] w-full -translate-y-[6%] object-cover object-[50%_45%] sm:object-[60%_45%]"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-transparent to-ink/20" />
             <div className="absolute bottom-5 left-5 font-tech text-[0.55rem] tracking-[0.3em] text-bone/70 md:bottom-8 md:left-8">
@@ -87,15 +87,15 @@ export function Story() {
             </div>
           </div>
 
-          <div className="relative -mt-24 ml-auto w-[68%] sm:w-[48%] md:-mt-48 lg:absolute lg:-bottom-28 lg:right-0 lg:mt-0 lg:w-[34%]">
+          <div className="relative -mt-24 ml-auto w-[68%] sm:w-[48%] md:-mt-48 lg:absolute lg:-bottom-64 lg:right-0 lg:mt-0 lg:w-[34%]">
             <div data-clip className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-white/10 shadow-[0_40px_120px_-30px_rgba(0,0,0,0.9)]">
               <img
                 data-parallax="8"
-                src="/images/party2-sm.webp"
-                alt="A DJ seen from behind facing a festival crowd under coloured stage beams"
+                src="/images/party2.webp"
+                alt="A DJ seen from behind raising an ADRIN Mandarin bottle to a festival crowd, a Pomegranate bottle on the decks"
                 loading="lazy"
                 decoding="async"
-                className="absolute inset-0 h-[124%] w-full -translate-y-[10%] object-cover object-[46%_50%]"
+                className="absolute inset-0 h-[124%] w-full -translate-y-[10%] object-cover object-[55%_50%]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink/70 to-transparent" />
               <div className="absolute bottom-4 left-4 font-tech text-[0.55rem] tracking-[0.3em] text-bone/70">FRAME 02 · NO CURFEW</div>
@@ -108,7 +108,7 @@ export function Story() {
         </div>
 
         {/* manifesto */}
-        <div className="relative mt-24 grid gap-14 pb-24 md:mt-44 lg:grid-cols-12 lg:pb-36">
+        <div className="relative mt-24 grid gap-14 pb-24 md:mt-44 lg:mt-80 lg:grid-cols-12 lg:pb-36">
           <div className="lg:col-span-7">
             <SplitReveal as="p" type="words" stagger={0.025} className="font-display text-[clamp(1.6rem,3.1vw,3rem)] font-medium leading-[1.12] tracking-[-0.025em] text-bone">
               ADRIN is more than a drink. It&rsquo;s the moment the bass drops. Made for the ones who start the party, stay for the encore and{' '}
