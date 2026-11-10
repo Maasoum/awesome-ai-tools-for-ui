@@ -76,7 +76,7 @@ export function Story() {
               src="/images/party1.webp"
               srcSet="/images/party1-sm.webp 900w, /images/party1.webp 1376w"
               sizes="(min-width: 1024px) 78vw, 100vw"
-              alt="Friends cheering under lasers and confetti, raising ADRIN Cactus, Mandarin, Sparkling Lime and Sparkling bottles"
+              alt="Friends cheering under lasers and confetti, each raising a small ADRIN bottle — Cactus, Mandarin and Sparkling Lime"
               loading="lazy"
               decoding="async"
               className="absolute inset-0 h-[114%] w-full -translate-y-[6%] object-cover object-[50%_45%] sm:object-[60%_45%]"
@@ -92,7 +92,7 @@ export function Story() {
               <img
                 data-parallax="8"
                 src="/images/party2.webp"
-                alt="A DJ seen from behind raising an ADRIN Mandarin bottle to a festival crowd, a Pomegranate bottle on the decks"
+                alt="A DJ seen from behind raising a small ADRIN Mandarin bottle to a festival crowd, a Pomegranate bottle on the decks"
                 loading="lazy"
                 decoding="async"
                 className="absolute inset-0 h-[124%] w-full -translate-y-[10%] object-cover object-[55%_50%]"
