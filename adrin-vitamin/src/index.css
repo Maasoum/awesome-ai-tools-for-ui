@@ -12,17 +12,26 @@
   initial-value: #ffb020;
 }
 
+@property --on-accent {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #07050a;
+}
+
 :root {
   --accent: #ff4a1c;
   --accent-2: #ffb020;
+  --on-accent: #07050a;
   transition:
     --accent 0.9s cubic-bezier(0.65, 0, 0.35, 1),
-    --accent-2 0.9s cubic-bezier(0.65, 0, 0.35, 1);
+    --accent-2 0.9s cubic-bezier(0.65, 0, 0.35, 1),
+    --on-accent 0.9s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 @theme inline {
   --color-glow: var(--accent);
   --color-glow2: var(--accent-2);
+  --color-on-glow: var(--on-accent);
 }
 
 @theme {
@@ -64,7 +73,7 @@
   }
   ::selection {
     background: var(--color-glow);
-    color: var(--color-ink);
+    color: var(--color-on-glow);
   }
   :focus-visible {
     outline: 2px solid var(--color-glow);

@@ -14,6 +14,8 @@ export interface Flavor {
   accent: string
   /** secondary glow colour for beams, bokeh and confetti */
   accent2: string
+  /** text colour on accent-filled buttons (defaults to ink) */
+  onAccent?: string
   /** liquid colour, top half of the bottle */
   top: string
   /** liquid colour, bottom half of the bottle */
@@ -92,15 +94,16 @@ export const FLAVORS: Flavor[] = [
     tagline: 'Deep, dark and electric.',
     description: 'Ruby pomegranate and wild berries with an antioxidant kick. Rich, tangy and dressed in midnight purple.',
     notes: ['Ruby pomegranate', 'Wild berries', 'Antioxidants'],
-    accent: '#B026FF',
+    accent: '#A91C8E',
     accent2: '#FF2E7E',
+    onAccent: '#FFFFFF',
     top: '#8A2584',
     bottom: '#B5206B',
     vitaminC: '100%',
     sugar: '0g',
     calories: '20',
     price: 2.49,
-    lightLabel: 'Ultra violet',
+    lightLabel: 'Deep magenta',
   },
   {
     id: 'lime',

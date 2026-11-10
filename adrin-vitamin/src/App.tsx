@@ -76,6 +76,7 @@ export default function App() {
       const f = flavorById(id)
       document.documentElement.style.setProperty('--accent', f.accent)
       document.documentElement.style.setProperty('--accent-2', f.accent2)
+      document.documentElement.style.setProperty('--on-accent', f.onAccent ?? '#07050a')
     }
     applyAccent(useUI.getState().flavor)
     const unsubAccent = useUI.subscribe((s, p) => s.flavor !== p.flavor && applyAccent(s.flavor))

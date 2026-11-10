@@ -111,7 +111,7 @@ export function Navbar() {
                     }}
                     aria-current={active === l.id ? 'true' : undefined}
                     className={`relative block rounded-full px-5 py-2 font-display text-[0.68rem] font-semibold uppercase tracking-[0.24em] transition-colors duration-300 ${
-                      active === l.id ? 'text-ink' : 'text-steel hover:text-bone'
+                      active === l.id ? 'text-on-glow' : 'text-steel hover:text-bone'
                     }`}
                   >
                     {active === l.id && (
@@ -137,7 +137,7 @@ export function Navbar() {
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     exit={{ scale: 0 }}
-                    className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-glow px-1 font-tech text-[0.58rem] font-bold text-ink"
+                    className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-glow px-1 font-tech text-[0.58rem] font-bold text-on-glow"
                   >
                     {cartCount}
                   </motion.span>
@@ -146,7 +146,7 @@ export function Navbar() {
             </button>
             <button
               onClick={() => go('products')}
-              className="group relative hidden h-11 items-center gap-2 overflow-hidden rounded-full bg-glow px-6 font-display text-[0.68rem] font-bold uppercase tracking-[0.24em] text-ink sm:inline-flex"
+              className="group relative hidden h-11 items-center gap-2 overflow-hidden rounded-full bg-glow px-6 font-display text-[0.68rem] font-bold uppercase tracking-[0.24em] text-on-glow sm:inline-flex"
             >
               <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/50 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
               <span className="relative">Shop Adrin</span>
@@ -202,7 +202,7 @@ export function Navbar() {
               </ul>
             </nav>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ delay: 0.5 }} className="space-y-6">
-              <button onClick={() => go('products')} className="flex h-14 w-full items-center justify-center rounded-full bg-glow font-display text-xs font-bold uppercase tracking-[0.28em] text-ink">
+              <button onClick={() => go('products')} className="flex h-14 w-full items-center justify-center rounded-full bg-glow font-display text-xs font-bold uppercase tracking-[0.28em] text-on-glow">
                 Shop Adrin
               </button>
               <div className="flex justify-between font-tech text-[0.6rem] tracking-[0.3em] text-steel">

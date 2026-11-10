@@ -51,7 +51,7 @@ export function Footer() {
                   aria-invalid={state === 'error'}
                   aria-describedby="email-msg"
                 />
-                <button type="submit" className="h-11 shrink-0 rounded-full bg-glow px-6 font-display text-[0.65rem] font-bold uppercase tracking-[0.24em] text-ink transition-transform hover:scale-[1.03]">
+                <button type="submit" className="h-11 shrink-0 rounded-full bg-glow px-6 font-display text-[0.65rem] font-bold uppercase tracking-[0.24em] text-on-glow transition-transform hover:scale-[1.03]">
                   Join
                 </button>
               </div>
