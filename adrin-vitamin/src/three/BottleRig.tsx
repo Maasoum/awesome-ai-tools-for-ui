@@ -37,6 +37,7 @@ export function BottleRig() {
   const rimL = useRef<THREE.PointLight>(null!)
   const rimR = useRef<THREE.PointLight>(null!)
   const under = useRef<THREE.PointLight>(null!)
+  const sweepL = useRef<THREE.PointLight>(null!)
 
   const poses = useMemo(() => getPoses(size.width / size.height), [size.width, size.height])
   const cur = useRef<Pose>({ ...poses[0] })
@@ -139,8 +140,9 @@ export function BottleRig() {
     if (!reduced) idle.current += P.spin * dt
     const nearest = Math.round(idle.current / TAU) * TAU
     idle.current = damp(idle.current, nearest, (1 - spinW) * 1.6, dt)
-    const sway = reduced ? 0 : Math.sin(time * 0.55) * 0.22 * (1 - spinW)
-    spin.current.rotation.y = idle.current + P.turn + boost.current.v + sway + px * 0.4
+    // small sway only, so the logo and flavour name stay readable
+    const sway = reduced ? 0 : Math.sin(time * 0.45) * 0.12 * (1 - spinW)
+    spin.current.rotation.y = idle.current + P.turn + boost.current.v + sway + px * 0.25
 
     // camera dolly + gentle parallax
     camera.position.x = damp(camera.position.x, px * 0.18, 2.5, dt)
@@ -173,6 +175,15 @@ export function BottleRig() {
     rimL.current.intensity = 20 * P.glow
     rimR.current.intensity = 15 * P.glow
     under.current.intensity = 6 + P.swirl * 14
+
+    // slow light play on the glass: the stage lights drift behind the bottle,
+    // a soft white sweep glides across the front and reflections slide over the surface
+    const lt = reduced ? 0 : time
+    rimL.current.position.set(-3.4 + Math.sin(lt * 0.23) * 1.1, 1.4 + Math.sin(lt * 0.17 + 1.0) * 1.3, -2.6)
+    rimR.current.position.set(3.6 + Math.sin(lt * 0.19 + 2.0) * 1.1, 2.2 + Math.sin(lt * 0.21) * 1.3, -2.8)
+    sweepL.current.position.set(Math.sin(lt * 0.28) * 3.2, 1.2 + Math.sin(lt * 0.13) * 1.4, 3.2)
+    sweepL.current.color.set('#ffffff').lerp(rig.accent, 0.25)
+    state.scene.environmentRotation.y = Math.sin(lt * 0.12) * 0.55
   })
 
   return (
@@ -183,6 +194,7 @@ export function BottleRig() {
       <pointLight ref={rimL} position={[-3.4, 1.4, -2.6]} intensity={30} />
       <pointLight ref={rimR} position={[3.6, 2.2, -2.8]} intensity={24} />
       <pointLight ref={under} position={[0, -3, 1.5]} intensity={6} />
+      <pointLight ref={sweepL} position={[0, 1.2, 3.2]} intensity={7} distance={9} />
       <group ref={pos}>
         <group ref={tilt}>
           <group ref={spin}>

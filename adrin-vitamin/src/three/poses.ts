@@ -32,7 +32,7 @@ const TAU = Math.PI * 2
 
 const BASE: Pose[] = [
   // 0 hero
-  { x: 0.06, y: -0.03, scale: 1, tilt: -0.12, tiltX: 0.08, turn: -0.35, camZ: 9, particles: 0.45, swirl: 0, drops: 1, bigType: 0, spin: 0.32, glow: 0.75, beams: 0.9, crowd: 1, confetti: 0.6 },
+  { x: 0.06, y: -0.03, scale: 1, tilt: -0.08, tiltX: 0.06, turn: -0.06, camZ: 9, particles: 0.45, swirl: 0, drops: 1, bigType: 0, spin: 0, glow: 0.75, beams: 0.9, crowd: 1, confetti: 0.6 },
   // 1 formula — closer, full 360 turn on the way in
   { x: 0, y: -0.12, scale: 1, tilt: 0, tiltX: 0.02, turn: TAU, camZ: 7.1, particles: 0.75, swirl: 0, drops: 0.5, bigType: 0, spin: 0.1, glow: 0.95, beams: 0.45, crowd: 0.35, confetti: 0.25 },
   // 2 power — liquid burst
@@ -58,7 +58,7 @@ export function getPoses(aspect: number): Pose[] {
   if (aspect < 0.78) {
     // phones (portrait)
     const o: Partial<Pose>[] = [
-      { x: 0, y: -0.16, scale: 0.52, tilt: -0.1 },
+      { x: 0, y: -0.16, scale: 0.52, tilt: -0.06, turn: 0 },
       { x: 0, y: -0.04, scale: 0.5, camZ: 6.6 },
       { x: 0.02, y: -0.08, scale: 0.46, tilt: 0.22 },
       { x: 0, y: 0.1, scale: 0.5 },

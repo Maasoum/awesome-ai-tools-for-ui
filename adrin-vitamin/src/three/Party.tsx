@@ -93,9 +93,8 @@ export function StageBeams() {
       const mat = mats[i]
       tmp.copy(b.second ? rig.accent2 : rig.accent)
       mat.uniforms.uColor.value.copy(tmp)
-      // gentle, slow shimmer — no strobing
-      const flicker = 0.8 + 0.2 * Math.sin(t * 0.9 + b.phase * 2.0)
-      mat.uniforms.uIntensity.value = damp(mat.uniforms.uIntensity.value, 0.42 * rig.beams * flicker, 3, 1 / 60)
+      // constant brightness — the beams only move, they never flicker
+      mat.uniforms.uIntensity.value = damp(mat.uniforms.uIntensity.value, 0.38 * rig.beams, 3, 1 / 60)
     })
   })
 
@@ -166,7 +165,7 @@ export function Bokeh() {
             gl_Position = projectionMatrix * mv;
             gl_PointSize = (90.0 + aSeed * 160.0) * uPR * 7.0 / -mv.z;
             vSeed = aSeed;
-            vTw = 0.6 + 0.4 * sin(uTime * (0.3 + aSeed * 0.6) + aSeed * 60.0);
+            vTw = 0.7 + 0.3 * fract(aSeed * 13.7);
           }`}
         fragmentShader={/* glsl */ `
           uniform vec3 uA; uniform vec3 uB; uniform float uOpacity;
@@ -269,7 +268,7 @@ export function Confetti() {
           void main(){
             if (vAlpha < 0.01) discard;
             vec3 col = vPick < 0.42 ? uA : (vPick < 0.74 ? uB : (vPick < 0.9 ? vec3(0.95) : mix(uA, uB, 0.5)));
-            col *= 0.35 + vGlint * 1.1;
+            col *= 0.5 + vGlint * 0.45;
             gl_FragColor = vec4(col, 0.85 * vAlpha);
           }`}
       />
@@ -279,27 +278,31 @@ export function Confetti() {
 
 /* -------------------------------- Crowd -------------------------------- */
 
+/**
+ * A handful of fans (5 silhouettes) standing behind the bottle, backlit by the stage.
+ * The rim light slowly travels along their outlines — movement only, no flicker.
+ */
 export function Crowd() {
   const mesh = useRef<THREE.Mesh>(null!)
   const tex = useMemo(() => {
     const t = new THREE.TextureLoader().load(crowdUrl)
-    t.wrapS = THREE.MirroredRepeatWrapping
+    t.wrapS = THREE.ClampToEdgeWrapping
     t.wrapT = THREE.ClampToEdgeWrapping
     t.colorSpace = THREE.NoColorSpace
     t.anisotropy = 4
     return t
   }, [])
-  const ASPECT = 2048 / 869
+  const ASPECT = 2048 / 677
   const mat = useMemo(
     () =>
       new THREE.ShaderMaterial({
         uniforms: {
           uTex: { value: tex },
-          uRepeat: { value: 1 },
           uA: { value: rig.accent.clone() },
           uB: { value: rig.accent2.clone() },
           uOpacity: { value: 1 },
           uTime: { value: 0 },
+          uTexel: { value: new THREE.Vector2(1 / 2048, 1 / 677) },
         },
         transparent: true,
         depthWrite: false,
@@ -307,23 +310,38 @@ export function Crowd() {
           varying vec2 vUv;
           void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
         fragmentShader: /* glsl */ `
-          uniform sampler2D uTex; uniform float uRepeat; uniform vec3 uA; uniform vec3 uB; uniform float uOpacity; uniform float uTime;
+          uniform sampler2D uTex; uniform vec3 uA; uniform vec3 uB; uniform float uOpacity; uniform float uTime; uniform vec2 uTexel;
           varying vec2 vUv;
+          float S(vec2 p){ return texture2D(uTex, clamp(p, vec2(0.0005), vec2(0.9995))).r; }
           void main(){
-            vec2 uv = vec2((vUv.x - 0.5) * uRepeat + 0.5, vUv.y);
-            float m = texture2D(uTex, uv).r;
-            float above = texture2D(uTex, uv + vec2(0.0, 0.006)).r;
-            float alpha = smoothstep(0.25, 0.55, m);
-            float front = smoothstep(0.78, 0.93, m);
-            // back row catches stage light, front row is pure silhouette
-            vec3 lightCol = mix(uA, uB, 0.5 + 0.5 * sin(vUv.x * 9.0 + uTime * 0.4));
-            vec3 col = mix(lightCol * 0.10 + vec3(0.006), vec3(0.003, 0.002, 0.004), front);
-            // backlit rim along the heads and raised hands
-            float rim = clamp((m - above) * 2.4, 0.0, 1.0);
-            col += mix(uA, lightCol, 0.4) * rim * 0.9;
-            // fade into the floor
-            col *= smoothstep(-0.05, 0.35, vUv.y) * 0.8 + 0.2;
-            gl_FragColor = vec4(col, max(alpha, rim) * uOpacity);
+            vec2 uv = vUv;
+            // raised arms sway very slightly, more toward the top of the frame
+            uv.x += sin(uTime * 0.8 + uv.x * 14.0) * 0.0025 * uv.y * uv.y;
+            float m = S(uv);
+            // backlight: a thin rim where the stage light grazes the outline, brightest on top edges
+            vec2 o = uTexel * 3.0;
+            float ring = (S(uv + vec2(o.x, 0.0)) + S(uv - vec2(o.x, 0.0)) + S(uv + vec2(0.0, o.y)) + S(uv - vec2(0.0, o.y))
+                        + S(uv + o * 0.7) + S(uv - o * 0.7) + S(uv + vec2(o.x, -o.y) * 0.7) + S(uv + vec2(-o.x, o.y) * 0.7)) / 8.0;
+            float rim = clamp((m - ring) * 1.8, 0.0, 1.0);
+            float top = clamp((m - S(uv + vec2(0.0, o.y * 2.0))) * 2.0, 0.0, 1.0);
+            float light = rim * 0.4 + top * 0.6;
+            // the light colour drifts slowly across the group (spatial, not temporal blinking)
+            float sweep = 0.5 + 0.5 * sin(vUv.x * 5.0 - uTime * 0.25);
+            vec3 lightCol = mix(uA, uB, sweep * 0.5);
+            vec3 col = vec3(0.004, 0.003, 0.006) + lightCol * 0.025;
+            col += lightCol * light * 0.85;
+            // soft stage glow leaking around the figures (outside the silhouette)
+            vec2 w = uTexel * 16.0;
+            float wide = (S(uv + vec2(w.x, 0.0)) + S(uv - vec2(w.x, 0.0)) + S(uv + vec2(0.0, w.y)) + S(uv - vec2(0.0, w.y))) * 0.25;
+            float halo = (1.0 - smoothstep(0.35, 0.65, m)) * wide;
+            // fade into the floor + soft side edges
+            float floorFade = smoothstep(0.0, 0.35, vUv.y);
+            col *= 0.35 + 0.65 * floorFade;
+            float side = smoothstep(0.0, 0.04, vUv.x) * smoothstep(1.0, 0.96, vUv.x);
+            float body = smoothstep(0.35, 0.65, m);
+            col = mix(lightCol * 0.9, col, body);
+            float alpha = max(body, halo * 0.22) * side * uOpacity;
+            gl_FragColor = vec4(col, alpha);
           }`,
       }),
     [tex],
@@ -335,7 +353,7 @@ export function Crowd() {
     },
     [tex, mat],
   )
-  const Z = -4.6
+  const Z = -3.4
   useFrame((state) => {
     const u = mat.uniforms
     u.uA.value.copy(rig.accent)
@@ -347,13 +365,12 @@ export function Crowd() {
     const dist = cam.position.z - Z
     const halfH = Math.tan(THREE.MathUtils.degToRad(cam.fov / 2)) * dist
     const halfW = halfH * cam.aspect
-    const w = halfW * 2.3
-    // crowd fills roughly the lower third of the frame
-    const h = Math.min(halfH * 2 * (cam.aspect < 0.8 ? 0.26 : 0.36), w / ASPECT)
-    u.uRepeat.value = w / (h * ASPECT)
-    mesh.current.scale.set(w, h, 1)
-    // sink slightly with the camera's vertical parallax for depth
-    mesh.current.position.set(cam.position.x * 0.6, cam.position.y - halfH + h * 0.5 - halfH * 0.03, Z)
+    // a handful of fans, about 40% of the frame height, grouped behind the bottle
+    let h = halfH * 2 * (cam.aspect < 0.8 ? 0.3 : 0.42)
+    h = Math.min(h, (halfW * 2 * 1.15) / ASPECT)
+    mesh.current.scale.set(h * ASPECT, h, 1)
+    // anchored to the bottom of the frame, slightly below so cut-off waists never show
+    mesh.current.position.set(cam.position.x * 0.5, cam.position.y - halfH + h * 0.5 - h * 0.06, Z)
   })
   return (
     <mesh ref={mesh} material={mat} renderOrder={-4} frustumCulled={false}>

@@ -73,7 +73,7 @@ export function EnergyParticles() {
             gl_Position = projectionMatrix * mv;
             float size = (aSeed > 0.93 ? 2.6 : 1.0) * (0.6 + aSeed * 0.9);
             gl_PointSize = size * uPR * 34.0 / -mv.z;
-            float tw = 0.55 + 0.45 * sin(uTime * (1.5 + aSeed * 3.0) + aSeed * 50.0);
+            float tw = 0.55 + 0.45 * fract(aSeed * 7.31);
             float edge = smoothstep(-6.0, -4.5, p.y) * (1.0 - smoothstep(4.5, 6.0, p.y));
             float near = smoothstep(0.6, 2.5, -mv.z);
             vA = uOpacity * tw * edge * near;
@@ -328,9 +328,8 @@ export function Backdrop() {
             float halo = exp(-dot(d,d) * 14.0);
             vec3 col = base + uColor * (g * 0.022 + halo * 0.04) * uIntensity;
             // stage glow rising behind the crowd
-            float band = exp(-pow((vUv.y - 0.2) / 0.17, 2.0));
-            float pulse = 0.85 + 0.15 * sin(uTime * 1.3);
-            col += uColor * band * 0.05 * uStage * pulse * (0.6 + 0.4 * (1.0 - abs(vUv.x - 0.5) * 1.4));
+            float band = exp(-pow((vUv.y - 0.34) / 0.22, 2.0));
+            col += uColor * band * 0.055 * uStage * (0.6 + 0.4 * (1.0 - abs(vUv.x - 0.5) * 1.4));
             // coloured haze in the upper corners (secondary light rig)
             col += uColor2 * 0.018 * uStage * (exp(-dot(vUv - vec2(0.05, 1.0), vUv - vec2(0.05, 1.0)) * 6.0) + exp(-dot(vUv - vec2(0.95, 1.0), vUv - vec2(0.95, 1.0)) * 6.0));
             col *= 1.0 - 0.35 * smoothstep(0.2, 0.9, length(vUv - 0.5));

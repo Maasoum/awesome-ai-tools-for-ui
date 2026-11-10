@@ -103,10 +103,10 @@ export function drawLabel(flavor: Flavor): HTMLCanvasElement {
 
   // --- ADRIN logo, front centre on the upper body
   const logo = getLogoImage()
-  const logoY = 0.2
+  const logoY = 0.16
   if (logo) {
     const sx = sxAt(logoY)
-    const wU = 0.62 // world width
+    const wU = 0.8 // world width
     const hU = wU * (logo.naturalHeight / logo.naturalWidth)
     const wPx = wU * PXV * sx
     const hPx = hU * PXV
@@ -134,10 +134,10 @@ export function drawLabel(flavor: Flavor): HTMLCanvasElement {
 
   // --- flavour name, white bold, front centre on the lower bulge
   const lines = flavor.labelLines
-  const nameY = lines.length > 1 ? -0.98 : -1.02
+  const nameY = lines.length > 1 ? -0.96 : -1.02
   const sxN = sxAt(nameY)
-  const maxW = 0.7 * PXV // world units → px (before squash)
-  let size = lines.length > 1 ? 150 : 170
+  const maxW = 0.8 * PXV // world units → px (before squash)
+  let size = lines.length > 1 ? 200 : 250
   ctx.font = `700 ${size}px "Space Grotesk Variable", sans-serif`
   const widest = Math.max(...lines.map((l) => ctx.measureText(l).width + l.length * size * 0.02))
   if (widest > maxW) size *= maxW / widest
@@ -147,9 +147,9 @@ export function drawLabel(flavor: Flavor): HTMLCanvasElement {
   ctx.font = `700 ${size}px "Space Grotesk Variable", sans-serif`
   ctx.textBaseline = 'middle'
   ctx.fillStyle = '#ffffff'
-  ctx.shadowColor = 'rgba(0,0,0,0.28)'
-  ctx.shadowBlur = 14
-  ctx.shadowOffsetY = 5
+  ctx.shadowColor = 'rgba(0,0,0,0.35)'
+  ctx.shadowBlur = 16
+  ctx.shadowOffsetY = 6
   const lh = size * 0.98
   lines.forEach((l, i) => spacedText(ctx, l, 0, (i - (lines.length - 1) / 2) * lh, size * 0.02, 'center'))
   ctx.shadowColor = 'transparent'
@@ -219,7 +219,7 @@ export function drawLabel(flavor: Flavor): HTMLCanvasElement {
   return c
 }
 
-export function makeLabelTexture(flavor: Flavor, anisotropy = 8) {
+export function makeLabelTexture(flavor: Flavor, anisotropy = 16) {
   const t = new THREE.CanvasTexture(drawLabel(flavor))
   t.wrapS = THREE.RepeatWrapping
   t.wrapT = THREE.ClampToEdgeWrapping
