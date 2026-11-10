@@ -1,0 +1,176 @@
+@import 'tailwindcss';
+
+/* The glow colour of the whole site follows the selected flavour (set on :root from the store). */
+@property --accent {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #ff4a1c;
+}
+@property --accent-2 {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #ffb020;
+}
+
+:root {
+  --accent: #ff4a1c;
+  --accent-2: #ffb020;
+  transition:
+    --accent 0.9s cubic-bezier(0.65, 0, 0.35, 1),
+    --accent-2 0.9s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@theme inline {
+  --color-glow: var(--accent);
+  --color-glow2: var(--accent-2);
+}
+
+@theme {
+  --color-ink: #07050a;
+  --color-char: #110e15;
+  --color-char-2: #18141d;
+  --color-bone: #f5f5f5;
+  --color-steel: #aeb5b5;
+
+  --font-display: 'Space Grotesk Variable', 'Space Grotesk', system-ui, sans-serif;
+  --font-sans: 'Inter Variable', 'Inter', system-ui, sans-serif;
+  --font-tech: 'Orbitron', 'Space Grotesk Variable', sans-serif;
+
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-quart: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+@layer base {
+  html {
+    background: var(--color-ink);
+    color: var(--color-bone);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: clip;
+  }
+  body {
+    font-family: var(--font-sans);
+    overflow-x: clip;
+  }
+  ::selection {
+    background: var(--color-glow);
+    color: var(--color-ink);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-glow);
+    outline-offset: 3px;
+  }
+  button {
+    cursor: pointer;
+  }
+}
+
+@layer components {
+  .display {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.045em;
+    line-height: 0.88;
+    text-transform: uppercase;
+  }
+  .tech {
+    font-family: var(--font-tech);
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+  }
+  .eyebrow {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.72rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+  }
+  .text-outline {
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(245, 245, 245, 0.22);
+  }
+  .text-outline-accent {
+    color: transparent;
+    -webkit-text-stroke: 1px var(--accent);
+  }
+  .hairline {
+    background: linear-gradient(90deg, transparent, rgba(174, 181, 181, 0.35), transparent);
+    height: 1px;
+  }
+  .glass {
+    background: linear-gradient(180deg, rgba(22, 26, 26, 0.62), rgba(10, 12, 12, 0.5));
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    border: 1px solid rgba(174, 181, 181, 0.12);
+  }
+  .grain::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.07;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    mix-blend-mode: overlay;
+  }
+  .drop-deep {
+    filter: drop-shadow(0 4px 24px rgba(5, 6, 6, 0.75));
+  }
+  .text-shadow-deep {
+    text-shadow: 0 2px 30px rgba(5, 6, 6, 0.85);
+  }
+}
+
+/* --- motion utilities --- */
+@keyframes scroll-cue {
+  0% { transform: translateY(-100%); }
+  60%, 100% { transform: translateY(220%); }
+}
+@keyframes arrow-bob {
+  0%, 100% { transform: translateY(0); opacity: 0.5; }
+  50% { transform: translateY(6px); opacity: 1; }
+}
+@keyframes marquee {
+  to { transform: translate3d(-50%, 0, 0); }
+}
+@keyframes streak {
+  0% { transform: translateX(-30vw) scaleX(0.4); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translateX(130vw) scaleX(1); opacity: 0; }
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+@keyframes float-can {
+  0%, 100% { transform: translateY(0) rotate(-6deg); }
+  50% { transform: translateY(-14px) rotate(-4deg); }
+}
+
+.animate-scroll-cue { animation: scroll-cue 2.2s var(--ease-quart) infinite; }
+.animate-arrow-bob { animation: arrow-bob 1.8s ease-in-out infinite; }
+.animate-marquee { animation: marquee 38s linear infinite; }
+.animate-blink { animation: blink 1.6s steps(2) infinite; }
+.animate-spin-slow { animation: spin-slow 24s linear infinite; }
+.animate-float-can { animation: float-can 6s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
