@@ -100,7 +100,7 @@ export function Navbar() {
           </a>
 
           <nav aria-label="Primary" className="absolute left-1/2 hidden -translate-x-1/2 lg:block">
-            <ul className="flex items-center gap-1 rounded-full border border-white/[0.07] bg-white/[0.025] p-1 backdrop-blur-md">
+            <ul className="flex items-center gap-1 rounded-full border border-[var(--accent)]/25 bg-white/[0.025] p-1 backdrop-blur-md transition-colors duration-700">
               {LINKS.map((l) => (
                 <li key={l.id}>
                   <a
@@ -111,7 +111,7 @@ export function Navbar() {
                     }}
                     aria-current={active === l.id ? 'true' : undefined}
                     className={`relative block rounded-full px-5 py-2 font-display text-[0.68rem] font-semibold uppercase tracking-[0.24em] transition-colors duration-300 ${
-                      active === l.id ? 'text-on-glow' : 'text-steel hover:text-bone'
+                      active === l.id ? 'text-on-glow' : 'text-steel hover:text-[var(--accent)]'
                     }`}
                   >
                     {active === l.id && (
@@ -127,7 +127,7 @@ export function Navbar() {
           <div className="relative z-10 flex items-center gap-2 sm:gap-3">
             <button
               onClick={() => setCartOpen(true)}
-              className="relative grid h-11 w-11 place-items-center rounded-full border border-white/10 text-bone transition-colors hover:border-glow hover:text-glow"
+              className="relative grid h-11 w-11 place-items-center rounded-full border border-glow/45 text-glow transition-colors hover:border-glow hover:bg-glow hover:text-on-glow"
               aria-label={`Open cart, ${cartCount} items`}
             >
               <CartIcon />
@@ -153,7 +153,7 @@ export function Navbar() {
             </button>
             <button
               onClick={() => setOpen((o) => !o)}
-              className="relative grid h-11 w-11 place-items-center rounded-full border border-white/10 lg:hidden"
+              className="relative grid h-11 w-11 place-items-center rounded-full border border-glow/45 lg:hidden"
               aria-label={open ? 'Close menu' : 'Open menu'}
               aria-expanded={open}
               aria-controls="mobile-menu"

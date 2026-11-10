@@ -1,4 +1,4 @@
-import { useEffect, useRef, type CSSProperties } from 'react'
+import { useEffect, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { FLAVORS, flavorById, type Flavor } from '../lib/flavors'
 import { useUI, formatPrice } from '../store/ui'
@@ -20,28 +20,26 @@ function SelectorCard({ f, active, onSelect }: { f: Flavor; active: boolean; onS
       onClick={onSelect}
       aria-pressed={active}
       aria-label={`Select ${f.name}`}
-      style={{ '--c': f.accent } as CSSProperties}
       className={`group relative flex w-full items-center gap-3 overflow-hidden rounded-2xl border p-2 pr-4 text-left transition-all duration-500 ease-[var(--ease-expo)] ${
-        active ? 'border-[var(--c)]/60 bg-white/[0.05]' : 'border-white/[0.07] bg-white/[0.015] hover:border-white/20 hover:bg-white/[0.04]'
+        active ? 'border-[var(--accent)]/70 bg-[var(--accent)]/[0.08]' : 'border-[var(--accent)]/[0.14] bg-white/[0.015] hover:border-[var(--accent)]/40 hover:bg-[var(--accent)]/[0.05]'
       }`}
     >
       <span
-        className="pointer-events-none absolute -left-8 top-1/2 h-28 w-28 -translate-y-1/2 rounded-full opacity-0 blur-2xl transition-opacity duration-700 group-hover:opacity-60"
-        style={{ background: f.accent, opacity: active ? 0.35 : undefined }}
+        className="pointer-events-none absolute -left-8 top-1/2 h-28 w-28 -translate-y-1/2 rounded-full bg-[var(--accent)] opacity-0 blur-2xl transition-opacity duration-700 group-hover:opacity-60"
+        style={{ opacity: active ? 0.35 : undefined }}
       />
       <span className="relative grid h-14 w-10 shrink-0 place-items-center">
         <ProductThumb flavor={f} className="h-14 w-auto transition-transform duration-700 ease-[var(--ease-expo)] group-hover:-translate-y-1 group-hover:-rotate-6 group-hover:scale-110" />
       </span>
       <span className="relative flex-1">
-        <span className="font-tech text-[0.55rem] tracking-[0.3em]" style={{ color: f.accent }}>
+        <span className="font-tech text-[0.55rem] tracking-[0.3em] text-[var(--accent)]">
           {f.index}
         </span>
         <span className="mt-0.5 block font-display text-[0.8rem] font-bold uppercase tracking-[0.08em] text-bone">{f.name}</span>
         <span className="block text-[0.7rem] text-steel">{f.notes.slice(0, 2).join(' · ')}</span>
       </span>
       <span
-        className={`relative h-2 w-2 rounded-full transition-all duration-500 ${active ? 'scale-100' : 'scale-50 opacity-40'}`}
-        style={{ background: f.accent, boxShadow: active ? `0 0 14px ${f.accent}` : 'none' }}
+        className={`relative h-2 w-2 rounded-full bg-[var(--accent)] transition-all duration-500 ${active ? 'scale-100 shadow-[0_0_14px_var(--accent)]' : 'scale-50 opacity-40'}`}
       />
     </button>
   )
@@ -82,7 +80,7 @@ export function Products() {
       <div
         aria-hidden
         className="pointer-events-none absolute left-1/2 top-[80%] h-[18vh] w-[46vh] -translate-x-1/2 rounded-[50%] opacity-50 mix-blend-screen blur-3xl transition-colors duration-1000 md:top-[79%]"
-        style={{ background: flavor.accent }}
+        style={{ background: 'var(--accent)' }}
       />
       {!webgl && (
         <div className="pointer-events-none absolute inset-0 grid place-items-center">
@@ -113,7 +111,7 @@ export function Products() {
                 </motion.span>
                 <motion.span
                   className="block"
-                  style={{ color: flavor.accent }}
+                  style={{ color: 'var(--accent)' }}
                   variants={{ hide: { y: '105%' }, show: { y: 0 }, exit: { y: '-105%' } }}
                   transition={{ duration: 0.8, delay: 0.06, ease }}
                 >
@@ -125,7 +123,7 @@ export function Products() {
                 <p className="mt-3 hidden max-w-sm text-sm leading-relaxed text-steel sm:block">{flavor.description}</p>
                 <ul className="mt-5 hidden flex-wrap gap-2 md:flex">
                   {flavor.notes.map((n) => (
-                    <li key={n} className="rounded-full border border-white/10 px-3 py-1.5 text-[0.7rem] uppercase tracking-[0.14em] text-steel">
+                    <li key={n} className="rounded-full border border-[var(--accent)]/30 px-3 py-1.5 text-[0.7rem] uppercase tracking-[0.14em] text-steel">
                       {n}
                     </li>
                   ))}
@@ -156,14 +154,14 @@ export function Products() {
         {/* selector */}
         <div className="flex flex-col gap-3 self-end md:self-center">
           <div className="hidden items-center justify-between md:flex">
-            <span className="eyebrow text-steel">Select flavor</span>
+            <span className="eyebrow text-[var(--accent)]">Select flavor</span>
             <div className="flex gap-2">
               {([-1, 1] as const).map((d) => (
                 <button
                   key={d}
                   onClick={() => stepFlavor(d)}
                   aria-label={d < 0 ? 'Previous flavor' : 'Next flavor'}
-                  className="grid h-10 w-10 place-items-center rounded-full border border-white/10 text-bone transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                  className="grid h-10 w-10 place-items-center rounded-full border border-[var(--accent)]/45 text-[var(--accent)] transition-colors hover:border-[var(--accent)] hover:bg-[var(--accent)] hover:text-on-glow"
                 >
                   <svg width="14" height="14" viewBox="0 0 16 16" className={d < 0 ? 'rotate-180' : ''} aria-hidden>
                     <path d="M1 8h13M9 3l5 5-5 5" stroke="currentColor" strokeWidth="1.6" fill="none" />
@@ -178,7 +176,7 @@ export function Products() {
             ))}
           </div>
           <div className="hidden items-center gap-3 font-tech text-[0.55rem] tracking-[0.28em] text-steel md:flex">
-            <span className="h-2 w-2 rounded-full transition-colors duration-700" style={{ background: flavor.accent, boxShadow: `0 0 10px ${flavor.accent}` }} />
+            <span className="h-2 w-2 rounded-full bg-[var(--accent)] shadow-[0_0_10px_var(--accent)]" />
             ACCENT LIGHT · {flavor.lightLabel.toUpperCase()}
           </div>
 
@@ -190,11 +188,10 @@ export function Products() {
                   key={f.id}
                   onClick={() => setFlavor(f.id)}
                   aria-pressed={f.id === flavorId}
-                  className={`flex flex-col items-center rounded-xl border px-1 pb-1.5 pt-1 transition-colors ${f.id === flavorId ? 'bg-white/[0.06]' : 'border-white/10'}`}
-                  style={{ borderColor: f.id === flavorId ? f.accent : undefined }}
+                  className={`flex flex-col items-center rounded-xl border px-1 pb-1.5 pt-1 transition-colors ${f.id === flavorId ? 'border-[var(--accent)] bg-[var(--accent)]/[0.08]' : 'border-[var(--accent)]/20'}`}
                 >
                   <ProductThumb flavor={f} className="h-14 w-auto" />
-                  <span className="mt-1 text-center font-tech text-[0.42rem] leading-tight tracking-[0.12em]" style={{ color: f.accent }}>
+                  <span className="mt-1 text-center font-tech text-[0.42rem] leading-tight tracking-[0.12em] text-[var(--accent)]">
                     {f.short.replace('SPARKLING ', '')}
                   </span>
                 </button>

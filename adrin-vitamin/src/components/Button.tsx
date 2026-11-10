@@ -47,7 +47,7 @@ export function Button({ children, onClick, variant = 'primary', className = '',
   const base = `group relative inline-flex items-center justify-center gap-3 overflow-hidden rounded-full font-display font-semibold uppercase tracking-[0.22em] transition-colors duration-500 disabled:opacity-40 disabled:cursor-not-allowed ${pad}`
   const styles: Record<Variant, string> = {
     primary: 'bg-[var(--accent)] text-on-glow shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_12px_40px_-12px_var(--accent)]',
-    secondary: 'text-bone border border-white/20 hover:border-[var(--accent)] hover:text-[var(--accent)] bg-white/[0.02] backdrop-blur-sm',
+    secondary: 'text-bone border border-[var(--accent)]/50 hover:border-[var(--accent)] hover:text-[var(--accent)] bg-white/[0.02] backdrop-blur-sm',
     ghost: 'text-bone hover:text-[var(--accent)] px-0',
   }
 
