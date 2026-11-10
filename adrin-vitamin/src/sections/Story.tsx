@@ -70,31 +70,28 @@ export function Story() {
 
         {/* layered imagery */}
         <div className="relative mt-16 md:mt-24">
-          <div data-clip className="relative aspect-[4/5] overflow-hidden rounded-3xl sm:aspect-[16/9] lg:w-[78%]">
-            <picture>
-              <source media="(max-width: 639px)" srcSet="/images/story-friends-portrait.webp" />
-              <img
-                data-parallax="5"
-                src="/images/story-friends.webp"
-                srcSet="/images/story-friends-sm.webp 900w, /images/story-friends.webp 1672w"
-                sizes="(min-width: 1024px) 78vw, 100vw"
-                alt="Friends cheering under lasers and confetti, each raising an ADRIN bottle — Cactus, Mandarin, Sparkling Lime, Pomegranate and Sparkling"
-                loading="lazy"
-                decoding="async"
-                className="absolute inset-0 h-[114%] w-full -translate-y-[6%] object-cover object-[50%_45%] sm:object-[50%_62%]"
-              />
-            </picture>
+          <div data-clip className="relative aspect-[16/10] overflow-hidden rounded-3xl sm:aspect-[16/9] lg:w-[78%]">
+            <img
+              data-parallax="5"
+              src="/images/story-crowd.webp"
+              srcSet="/images/story-crowd-sm.webp 900w, /images/story-crowd.webp 1287w"
+              sizes="(min-width: 1024px) 78vw, 100vw"
+              alt="Friends cheering under lasers and confetti, each holding an ADRIN bottle — Cactus, Mandarin and Sparkling Lime"
+              loading="lazy"
+              decoding="async"
+              className="absolute inset-0 h-[114%] w-full -translate-y-[6%] object-cover object-[50%_45%]"
+            />
             <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-transparent to-ink/20" />
             <div className="absolute bottom-5 left-5 font-tech text-[0.55rem] tracking-[0.3em] text-bone/70 md:bottom-8 md:left-8">
               FRAME 01 · <span className="text-glow">FIRST ROUND</span>
             </div>
           </div>
 
-          <div className="relative -mt-24 ml-auto w-[68%] sm:w-[48%] md:-mt-48 lg:absolute lg:-bottom-80 lg:right-0 lg:mt-0 lg:w-[34%]">
+          <div className="relative -mt-6 ml-auto w-[68%] sm:-mt-24 sm:w-[48%] md:-mt-48 lg:absolute lg:-bottom-80 lg:right-0 lg:mt-0 lg:w-[34%]">
             <div data-clip className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-white/10 shadow-[0_40px_120px_-30px_rgba(0,0,0,0.9)]">
               <img
                 data-parallax="8"
-                src="/images/story-dj-live.webp"
+                src="/images/story-dj-set.webp"
                 alt="A DJ seen from behind raising an ADRIN Mandarin bottle in his right hand to a festival crowd"
                 loading="lazy"
                 decoding="async"
