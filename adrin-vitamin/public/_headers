@@ -1,0 +1,22 @@
+# Cloudflare static-asset headers (Pages and Workers both read this file from the build output)
+
+# Vite fingerprints everything in /assets — cache it forever
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Photography and icons change rarely
+/images/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+/*.png
+  Cache-Control: public, max-age=604800
+
+# Always fetch a fresh index.html so new deploys show up immediately
+/
+  Cache-Control: public, max-age=0, must-revalidate
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
