@@ -1,0 +1,11 @@
+{
+  // Cloudflare Workers (static assets) deployment for the ADRIN landing page.
+  // Build first (`npm run build`), then `npx wrangler deploy` uploads ./dist.
+  // Cloudflare Pages ignores this file and only needs: build `npm run build`, output `dist`.
+  "name": "adrin-landing",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}

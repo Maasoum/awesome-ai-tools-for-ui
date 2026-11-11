@@ -65,3 +65,21 @@ Flavour data lives in `src/lib/flavors.ts`. Changing `accent` / `accent2` there 
 - Dialogs trap focus and close with Esc. Arrow keys switch flavours in the product showcase.
 
 Photography in `public/images` is optimised to WebP.
+
+## Deploying to Cloudflare (free)
+
+The build is a fully static site (no server code), so it runs on Cloudflare's free plan. Use Node 22 (pinned in `.node-version`).
+
+**Option A: Cloudflare Pages (Git integration)**
+
+1. Cloudflare dashboard → *Workers & Pages* → *Create* → *Pages* → *Connect to Git*, then pick this repository.
+2. Production branch: the branch that holds this project.
+3. Framework preset: *None* (or *Vite*). Root directory: `adrin-vitamin`. Build command: `npm run build`. Build output directory: `dist`.
+4. Save and deploy. The site is live at `https://<project>.pages.dev`, and every push redeploys it.
+
+**Option B: Cloudflare Workers (static assets), from Git or the CLI**
+
+- Git: *Workers & Pages* → *Create* → *Import a repository*. Root directory `adrin-vitamin`, build command `npm run build`, deploy command `npx wrangler deploy`.
+- CLI: `npm run build && npx wrangler deploy` (uses `wrangler.jsonc`; first run asks you to log in).
+
+`public/_headers` is copied into `dist/` and sets long-term caching for the fingerprinted `/assets/*`, a week for images, and no-cache for `index.html`. Cloudflare serves Brotli/gzip automatically. Serve the site from the root of a domain or subdomain, because image paths are absolute.
