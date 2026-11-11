@@ -79,7 +79,12 @@ The build is a fully static site (no server code), so it runs on Cloudflare's fr
 
 **Option B: Cloudflare Workers (static assets), from Git or the CLI**
 
-- Git: *Workers & Pages* → *Create* → *Import a repository*. Root directory `adrin-vitamin`, build command `npm run build`, deploy command `npx wrangler deploy`.
+- Git: *Workers & Pages* → *Create* → *Import a repository*, then fill in:
+  - Project name: `adrin-landing` (must match `name` in `wrangler.jsonc`)
+  - Build command: `cd adrin-vitamin && npm ci && npm run build`
+  - Deploy command: `cd adrin-vitamin && npx wrangler deploy`
+  - Preview command: `cd adrin-vitamin && npx wrangler versions upload`
+  - Production deploys come from the repository's default branch (`main`); change it under *Settings → Build → Branch control* if needed.
 - CLI: `npm run build && npx wrangler deploy` (uses `wrangler.jsonc`; first run asks you to log in).
 
 `public/_headers` is copied into `dist/` and sets long-term caching for the fingerprinted `/assets/*`, a week for images, and no-cache for `index.html`. Cloudflare serves Brotli/gzip automatically. Serve the site from the root of a domain or subdomain, because image paths are absolute.
