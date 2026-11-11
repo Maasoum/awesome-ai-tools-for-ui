@@ -31,7 +31,7 @@ The whole site is set in a night-time arena: a full-screen venue photograph sits
 | Sparkling | `#C3C8D2` → `#2FC2E6` | electric cyan |
 | Mandarin (default) | `#FF4B33` → `#EF331C` | fire orange |
 | Pomegranate | `#8A2584` → `#B5206B` | deep magenta `#A91C8E` |
-| Sparkling Lime | `#E6F41E` → `#3DBE3C` | acid lime |
+| Sparkling Lime | `#E6F41E` → `#3DBE3C` | lime green `#3DAF2C` |
 
 Flavour data lives in `src/lib/flavors.ts`. Changing `accent` / `accent2` there relights both the 3D scene and the UI. The UI uses the registered CSS custom properties `--accent` / `--accent-2` (Tailwind tokens `glow` / `glow2`), which animate smoothly between flavours.
 

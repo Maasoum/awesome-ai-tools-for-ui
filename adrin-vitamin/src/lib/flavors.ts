@@ -114,15 +114,15 @@ export const FLAVORS: Flavor[] = [
     tagline: 'Zest that hits the drop.',
     description: 'Sharp lime and lemon zest over a fizzing green base. Tangy, loud and the brightest bottle in the room.',
     notes: ['Key lime', 'Lemon zest', 'Extra fizz'],
-    accent: '#9BFF1A',
-    accent2: '#FFE81A',
+    accent: '#3DAF2C',
+    accent2: '#8BE07A',
     top: '#E6F41E',
     bottom: '#3DBE3C',
     vitaminC: '100%',
     sugar: '0g',
     calories: '14',
     price: 2.49,
-    lightLabel: 'Acid lime',
+    lightLabel: 'Lime green',
   },
 ]
 
