@@ -89,18 +89,6 @@ export function drawLabel(flavor: Flavor): HTMLCanvasElement {
   ctx.fillStyle = depth
   ctx.fillRect(0, 0, W, H)
 
-  // fine carbonation: tiny bright bubbles with a faint shadow
-  const rand = rng(flavor.id.length * 977 + 13)
-  for (let i = 0; i < 240; i++) {
-    const x = rand() * W
-    const y = rowAt(-1.5 + rand() * 2.65)
-    const r = 0.8 + Math.pow(rand(), 3) * 3.2
-    ctx.fillStyle = `rgba(255,255,255,${0.05 + rand() * 0.13})`
-    ctx.beginPath()
-    ctx.arc(x, y, r, 0, Math.PI * 2)
-    ctx.fill()
-  }
-
   // --- ADRIN logo, front centre on the upper body
   const logo = getLogoImage()
   const logoY = 0.16
@@ -230,109 +218,6 @@ export function makeLabelTexture(flavor: Flavor, anisotropy = 16) {
   t.minFilter = THREE.LinearMipmapLinearFilter
   t.needsUpdate = true
   return t
-}
-
-/* ------------------------------------------------------------------ */
-/*  Condensation: procedural height field -> normal map + coat mask    */
-/* ------------------------------------------------------------------ */
-
-export function makeCondensationMaps(size = 1024, seed = 42) {
-  const N = size
-  const h = new Float32Array(N * N)
-  const rand = rng(seed)
-
-  const stamp = (cx: number, cy: number, rx: number, ry: number, amp: number) => {
-    const x0 = Math.floor(cx - rx - 1)
-    const x1 = Math.ceil(cx + rx + 1)
-    const y0 = Math.floor(cy - ry - 1)
-    const y1 = Math.ceil(cy + ry + 1)
-    for (let y = y0; y <= y1; y++) {
-      const yy = ((y % N) + N) % N
-      const dy = (y - cy) / ry
-      for (let x = x0; x <= x1; x++) {
-        const dx = (x - cx) / rx
-        const d2 = dx * dx + dy * dy
-        if (d2 >= 1) continue
-        const xx = ((x % N) + N) % N
-        const v = Math.sqrt(1 - d2) * amp
-        const i = yy * N + xx
-        if (v > h[i]) h[i] = v
-      }
-    }
-  }
-
-  // micro mist
-  for (let i = 0; i < 1800; i++) {
-    const r = 1 + rand() * 2.2
-    stamp(rand() * N, rand() * N, r, r, r * 0.55)
-  }
-  // small droplets
-  for (let i = 0; i < 900; i++) {
-    const r = 2.5 + rand() * 5
-    stamp(rand() * N, rand() * N, r, r * (0.9 + rand() * 0.25), r * 0.6)
-  }
-  // medium
-  for (let i = 0; i < 170; i++) {
-    const r = 7 + rand() * 9
-    stamp(rand() * N, rand() * N, r * (0.9 + rand() * 0.2), r * (0.95 + rand() * 0.3), r * 0.55)
-  }
-  // large, slightly elongated by gravity
-  for (let i = 0; i < 26; i++) {
-    const r = 15 + rand() * 12
-    stamp(rand() * N, rand() * N, r, r * 1.25, r * 0.5)
-  }
-  // running drips: a trail of shrinking beads ending in a heavy drop
-  for (let i = 0; i < 14; i++) {
-    const x = rand() * N
-    const y = rand() * N
-    const len = 80 + rand() * 220
-    for (let k = 0; k < len; k += 2) {
-      const w = 2.2 + (k / len) * 4.5
-      stamp(x + Math.sin(k * 0.05 + i) * 2, y + k, w, w, w * 0.45)
-    }
-    stamp(x, y + len + 6, 9 + rand() * 4, 12 + rand() * 4, 6)
-  }
-
-  const normal = new Uint8Array(N * N * 4)
-  const mask = new Uint8Array(N * N * 4)
-  const at = (x: number, y: number) => h[(((y % N) + N) % N) * N + (((x % N) + N) % N)]
-  const strength = 1.6
-  for (let y = 0; y < N; y++) {
-    for (let x = 0; x < N; x++) {
-      const dx = (at(x + 1, y) - at(x - 1, y)) * strength
-      const dy = (at(x, y + 1) - at(x, y - 1)) * strength
-      let nx = -dx
-      let ny = dy
-      let nz = 2
-      const l = Math.hypot(nx, ny, nz)
-      nx /= l
-      ny /= l
-      nz /= l
-      const i = (y * N + x) * 4
-      normal[i] = (nx * 0.5 + 0.5) * 255
-      normal[i + 1] = (ny * 0.5 + 0.5) * 255
-      normal[i + 2] = (nz * 0.5 + 0.5) * 255
-      normal[i + 3] = 255
-      const hv = h[y * N + x]
-      const m = hv > 0.05 ? 255 : 34 // 34 = faint satin coat everywhere
-      mask[i] = m
-      mask[i + 1] = m
-      mask[i + 2] = m
-      mask[i + 3] = 255
-    }
-  }
-
-  const mk = (data: Uint8Array) => {
-    const t = new THREE.DataTexture(data, N, N, THREE.RGBAFormat)
-    t.wrapS = t.wrapT = THREE.RepeatWrapping
-    t.magFilter = THREE.LinearFilter
-    t.minFilter = THREE.LinearMipmapLinearFilter
-    t.generateMipmaps = true
-    t.anisotropy = 8
-    t.needsUpdate = true
-    return t
-  }
-  return { normal: mk(normal), mask: mk(mask) }
 }
 
 /* ------------------------------------------------------------------ */

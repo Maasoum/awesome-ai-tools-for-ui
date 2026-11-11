@@ -39,7 +39,7 @@ Flavour data lives in `src/lib/flavors.ts`. Changing `accent` / `accent2` there 
 
 - **There are no model or HDR files.** Everything is built in code:
   - **Bottle** (`src/three/bottleProfile.ts`, `buildBottle.ts`): the silhouette was traced from the product key visual and is turned into lathe geometry. It has three parts:
-    - a glossy liquid body with clearcoat condensation
+    - a smooth, glossy liquid body with a flawless clearcoat (no grain or micro-texture on the colour)
     - a clear glass neck with a rolled lip
     - a crown cap with 21 crimped flutes
   - **Label** (`src/three/textures.ts`): a full-colour canvas with the two-tone liquid gradient, carbonation, the ADRIN logo, the flavour name and a back panel (nutrition facts and barcode). The lathe UVs follow arc length, so the artwork is placed by bottle height and corrected for curvature.
@@ -48,7 +48,7 @@ Flavour data lives in `src/lib/flavors.ts`. Changing `accent` / `accent2` there 
   - **Studio lighting**: procedural softboxes pre-filtered with PMREM (`src/three/studioEnv.ts`).
 - **Scroll choreography:** ScrollTrigger progress is stored in `src/lib/sceneState.ts`. The render loop blends the per-section poses with damping.
 - **Product renders:** flavour cards and cart thumbnails are snapshots of the same procedural bottle, rendered once offscreen (`src/three/productShots.ts`).
-- **Post-processing:** bloom, ACES tone mapping, film grain and vignette.
+- **Post-processing:** bloom, ACES tone mapping and vignette.
 
 ## Brand assets
 

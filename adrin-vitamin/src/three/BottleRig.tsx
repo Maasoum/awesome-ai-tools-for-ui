@@ -22,7 +22,6 @@ export function BottleRig() {
     () =>
       buildBottle({
         labelA: assets.labels[initialFlavor],
-        condensation: assets.condensation,
         accent: flavorById(initialFlavor).accent,
         quality: sceneState.lowPower ? 'low' : 'high',
       }),

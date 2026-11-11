@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { EffectComposer, Bloom, Vignette, Noise, ToneMapping } from '@react-three/postprocessing'
-import { BlendFunction, ToneMappingMode } from 'postprocessing'
+import { EffectComposer, Bloom, Vignette, ToneMapping } from '@react-three/postprocessing'
+import { ToneMappingMode } from 'postprocessing'
 import { PerformanceMonitor } from '@react-three/drei'
 import * as THREE from 'three'
 import { BottleRig } from './BottleRig'
@@ -49,7 +49,6 @@ function Effects({ quality }: { quality: 'high' | 'low' }) {
     <EffectComposer multisampling={quality === 'high' ? 4 : 0} enableNormalPass={false}>
       <Bloom mipmapBlur intensity={0.85} luminanceThreshold={0.55} luminanceSmoothing={0.25} radius={0.72} />
       <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
-      <Noise premultiply blendFunction={BlendFunction.SOFT_LIGHT} opacity={0.16} />
       <Vignette eskil={false} offset={0.22} darkness={0.78} />
     </EffectComposer>
   )

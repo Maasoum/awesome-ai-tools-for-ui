@@ -44,20 +44,12 @@ function crimp(geo: THREE.BufferGeometry) {
 
 export function buildBottle(opts: {
   labelA: THREE.Texture
-  condensation: { normal: THREE.Texture; mask: THREE.Texture }
   accent: string
   quality?: 'high' | 'low'
 }): BottleHandle {
   const segs = opts.quality === 'low' ? 84 : 168
   const group = new THREE.Group()
   group.name = 'adrin-bottle'
-
-  const condNormal = opts.condensation.normal.clone()
-  condNormal.repeat.set(3, 3)
-  condNormal.needsUpdate = true
-  const condMask = opts.condensation.mask.clone()
-  condMask.repeat.set(3, 3)
-  condMask.needsUpdate = true
 
   const uniforms: BottleUniforms = {
     uLabelB: { value: opts.labelA },
@@ -76,11 +68,9 @@ export function buildBottle(opts: {
     color: '#ffffff',
     metalness: 0,
     roughness: 0.2,
+    // smooth, flawless gloss: no micro-texture, so the liquid colour stays clean
     clearcoat: 1,
-    clearcoatMap: condMask,
-    clearcoatNormalMap: condNormal,
-    clearcoatNormalScale: new THREE.Vector2(0.9, 0.9),
-    clearcoatRoughness: 0.03,
+    clearcoatRoughness: 0.04,
     specularIntensity: 1,
     ior: 1.5,
     envMapIntensity: 1.35,
@@ -197,8 +187,6 @@ export function buildBottle(opts: {
       innerGlass.dispose()
       capMat.dispose()
       ringMat.dispose()
-      condNormal.dispose()
-      condMask.dispose()
     },
   }
 }

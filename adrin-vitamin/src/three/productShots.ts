@@ -39,7 +39,7 @@ export function renderProductShots(assets: ReturnType<typeof getAssets>): Partia
 
   const out: Partial<Record<FlavorId, string>> = {}
   for (const f of FLAVORS) {
-    const bottle = buildBottle({ labelA: assets.labels[f.id], condensation: assets.condensation, accent: f.accent, quality: 'high' })
+    const bottle = buildBottle({ labelA: assets.labels[f.id], accent: f.accent, quality: 'high' })
     bottle.uniforms.uRimIntensity.value = 0.45
     bottle.uniforms.uInkGlow.value = 0.22
     bottle.group.rotation.set(0.06, -0.38, -0.06)
